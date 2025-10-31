@@ -75,9 +75,9 @@ class FavoriteView extends StatelessWidget {
                         20, //172(98 appbar + 74 bottombar) - 50 fields(24+26) - 20 padding(2*10)
                     child: ListView.separated(
                       padding: EdgeInsets.symmetric(vertical: 10),
-                      itemCount:
-                          mainProvider.heroesFavoritos.length +
-                          mainProvider.heroesWithFiltres.length,
+                      itemCount: list.length,
+                      // mainProvider.heroesFavoritos.length +
+                      // mainProvider.heroesWithFiltres.length,
                       itemBuilder: (context, index) {
                         if (list[index].isFavorite == true) {
                           return FadeHeroeWidget(

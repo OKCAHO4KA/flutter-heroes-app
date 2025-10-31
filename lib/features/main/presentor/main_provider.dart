@@ -39,7 +39,7 @@ class MainProvider extends ChangeNotifier {
       heroes = cachedHeroes;
       isLoading = false;
       notifyListeners();
-      return;
+      // return;
     }
 
     heroesModel = await ApiService.fetchListHeroes(
