@@ -22,9 +22,23 @@ class LocalCache {
     return decoded.map((e) => Heroe.fromJson(e)).toList();
   }
 
+  static Future<List<Heroe>> loadHeroesFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_heroesFavoritesKey);
+    if (jsonString == null) return [];
+
+    final decoded = json.decode(jsonString) as List;
+    return decoded.map((e) => Heroe.fromJson(e)).toList();
+  }
+
   static Future<void> clearCache() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_heroesKey);
+  }
+
+  static Future<void> clearFavoritesCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_heroesFavoritesKey);
   }
 
   //filters

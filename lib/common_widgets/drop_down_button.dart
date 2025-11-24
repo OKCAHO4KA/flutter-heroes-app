@@ -38,7 +38,7 @@ class _DropdownMenuSimple extends State<DropdownMenuSimple> {
       controller: widget.controller,
       width: 200,
       hintText: statusList.first.label,
-      textStyle: theme.medium10.copyWith(color: theme.primaryColor),
+      textStyle: theme.medium10.copyWith(color: theme.textColorDefault),
       inputDecorationTheme: const InputDecorationTheme(
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
