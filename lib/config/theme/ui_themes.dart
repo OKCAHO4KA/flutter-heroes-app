@@ -10,7 +10,7 @@ class UIThemes {
   static ThemeData lightTheme() => ThemeData(
     brightness: Brightness.light,
     fontFamily: "MontrserratRegular",
-    scaffoldBackgroundColor: LightModeColors.backgroundPrimary,
+    scaffoldBackgroundColor: const Color.fromARGB(255, 218, 226, 218),
     dividerColor: LightModeColors.primaryColor,
     inputDecorationTheme: InputDecorationTheme(
       hintStyle: medium10Static.copyWith(color: LightModeColors.primaryColor),
@@ -22,7 +22,7 @@ class UIThemes {
         statusBarBrightness: Brightness.dark,
       ),
       centerTitle: true,
-      backgroundColor: LightModeColors.primaryColor,
+      backgroundColor: LightModeColors.endo,
       elevation: 0,
       shadowColor: Color.fromRGBO(0, 0, 0, 0.1),
     ),
@@ -45,7 +45,7 @@ class UIThemes {
       }),
     ),
     bottomAppBarTheme: const BottomAppBarThemeData(
-      color: LightModeColors.primaryColor,
+      color: LightModeColors.endo,
       surfaceTintColor: LightModeColors.primaryColor,
       height: 50,
       elevation: 0,
@@ -60,7 +60,7 @@ class UIThemes {
   static ThemeData darkTheme() => ThemeData(
     brightness: Brightness.dark,
     fontFamily: "MontrserratRegular",
-    scaffoldBackgroundColor: DarkModeColors.backgroundPrimary,
+    scaffoldBackgroundColor: const Color.fromARGB(255, 31, 28, 49),
     dividerColor: DarkModeColors.primaryColor,
     appBarTheme: const AppBarTheme(
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -121,6 +121,8 @@ class UIThemes {
 
   Color get redColor =>
       isDarkTheme ? DarkModeColors.redColor : LightModeColors.redColor;
+  Color get textAppBar =>
+      isDarkTheme ? DarkModeColors.endo : LightModeColors.primaryColor;
 
   Color get textColorDefault => isDarkTheme
       ? DarkModeColors.textColorDefault
@@ -128,6 +130,9 @@ class UIThemes {
 
   Color get greenAccent =>
       isDarkTheme ? DarkModeColors.greenAccent : LightModeColors.greenAccent;
+
+  Color get colorCard =>
+      isDarkTheme ? DarkModeColors.whiteColor : LightModeColors.whiteColor;
 
   Color get primaryColor =>
       isDarkTheme ? DarkModeColors.primaryColor : LightModeColors.primaryColor;
@@ -147,7 +152,11 @@ class UIThemes {
     fontFamily: 'MontrserratBold',
     color: textColorDefault,
   );
-
+  TextStyle get bold15 => TextStyle(
+    fontSize: 15,
+    fontFamily: 'MontrserratBold',
+    color: isDarkTheme ? LightModeColors.endo : DarkModeColors.primaryColor,
+  );
   TextStyle get medium18 => TextStyle(
     fontSize: 18,
     fontFamily: 'MontrserratMedium',

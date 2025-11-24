@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:prueba_jun/features/main/use_cases/main_repository_impl.dart';
 import 'package:prueba_jun/library.dart';
 
 class SplashPage extends StatefulWidget {
@@ -26,14 +27,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => MainProvider())],
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => MainProvider(mainRepository: MainRepositoryImpl()),
+        ),
+      ],
       child: Scaffold(
         body: Container(
           width: MediaQuery.sizeOf(context).width,
           height: MediaQuery.sizeOf(context).height,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/bg_rik_and_morty.jpg"),
+              image: AssetImage("assets/images/bg.jpg"),
               fit: BoxFit.cover,
             ),
           ),

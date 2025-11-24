@@ -15,80 +15,71 @@ class ItemHeroeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = UIThemes.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          GeneralConstants.borderRadiusDefault,
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+          width: (MediaQuery.sizeOf(context).width - 32) / 2 - 10,
+          height: 210,
         ),
-        border: Border.all(color: theme.primaryColor),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: GeneralConstants.padding10,
+        Container(
+          width: (MediaQuery.sizeOf(context).width - 32) / 2 - 10,
+          height: 160,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(GeneralConstants.borderRadiusDefault),
             ),
-            width: MediaQuery.sizeOf(context).width - 42 - 160,
-            height: 162,
-            child: ItemText(heroe: heroe),
           ),
-          Stack(
+          clipBehavior: Clip.hardEdge,
+          child: CachedNetworkImage(
+            imageUrl: heroe.image,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            errorWidget: (context, url, error) =>
+                Image.asset('assets/images/placeholder.jpg', fit: BoxFit.cover),
+          ),
+        ),
+        Container(
+          width: (MediaQuery.sizeOf(context).width - 32) / 2 - 10,
+          padding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: GeneralConstants.paddingHorizontal,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(
-                      GeneralConstants.borderRadiusDefault,
-                    ),
-                    bottomRight: Radius.circular(
-                      GeneralConstants.borderRadiusDefault,
-                    ),
-                  ),
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: CachedNetworkImage(
-                  imageUrl: heroe.image,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  errorWidget: (context, url, error) => Image.asset(
-                    'assets/images/placeholder.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Container(
-                width: 160,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: GeneralConstants.paddingHorizontal,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        onTapStar != null ? onTapStar!() : null;
-                      },
-                      child: Icon(
-                        isFavorite
-                            ? Icons.star_rounded
-                            : Icons.star_border_rounded,
-                        color: theme.primaryColor,
-                        size: 40,
-                      ),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  onTapStar != null ? onTapStar!() : null;
+                },
+                child: Icon(
+                  isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: theme.primaryColor,
+                  size: 40,
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.colorCard,
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(GeneralConstants.borderRadiusDefault),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: GeneralConstants.padding10,
+            ),
+            width: (MediaQuery.sizeOf(context).width - 32) / 2 - 10,
+            height: 65,
+            child: ItemText(heroe: heroe),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -104,11 +95,10 @@ class ItemText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        lineText(heroe.name, theme.bold20),
-        lineText(heroe.location.name, theme.medium15),
-        lineText(heroe.origin.name, theme.medium15),
-        lineText(heroe.species.name, theme.medium15),
-        lineText(heroe.status.name, theme.medium15),
+        lineText(heroe.name, theme.bold15),
+        lineText(heroe.location.name, theme.medium10),
+        lineText(heroe.origin.name, theme.medium10),
+        lineText(heroe.species.name, theme.medium10),
       ],
     );
   }

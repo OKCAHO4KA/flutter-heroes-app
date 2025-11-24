@@ -9,17 +9,20 @@ class MainPage extends StatelessWidget {
     final mainProvider = Provider.of<MainProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        actionsPadding: const EdgeInsets.only(right: 10),
         automaticallyImplyLeading: false,
         title: Text(
           GeneralConstants.appTitle,
-          style: theme.bold23.copyWith(color: theme.greenAccent),
+          style: theme.bold23.copyWith(color: theme.textAppBar),
         ),
         actions: [
-          Switch.adaptive(
-            value: !mainProvider.isDarkTheme,
-            onChanged: (value) {
+          IconButton(
+            onPressed: () {
               mainProvider.setDarkTheme();
             },
+            icon: Icon(
+              mainProvider.isDarkTheme ? Icons.sunny : Icons.nightlight,
+            ),
           ),
         ],
       ),
@@ -27,6 +30,7 @@ class MainPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 10),
               mainProvider.currentView == ViewsType.main
                   ? MainView()
                   : FavoriteView(),
@@ -75,8 +79,8 @@ class ItemBottomAppBar extends StatelessWidget {
         icon,
         size: 30,
         color: isActive
-            ? theme.greenAccent
-            : theme.whiteColor.withValues(alpha: 0.3),
+            ? theme.textAppBar
+            : theme.textAppBar.withValues(alpha: 0.3),
       ),
       onPressed: () => onPressed != null ? onPressed!() : null,
     );

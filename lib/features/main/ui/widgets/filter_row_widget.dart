@@ -45,7 +45,7 @@ class FilterRowWidget extends StatelessWidget {
               ),
               border: InputBorder.none,
             ),
-            style: theme.medium15.copyWith(color: theme.primaryColor),
+            style: theme.medium15.copyWith(color: theme.textColorDefault),
           ),
         ),
         Container(

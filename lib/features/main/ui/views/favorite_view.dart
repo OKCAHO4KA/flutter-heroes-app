@@ -28,13 +28,17 @@ class FavoriteView extends StatelessWidget {
           child: FilterRowWidget(
             hintStatus: "Поиск по статусу",
             hintName: "Поиск по любимым героям",
-            onSelected: (String label) =>
-                mainProvider.fetchListHeroes("", label),
+            onSelected: (String label) => mainProvider.fetchListHeroes(
+              "",
+              label,
+              mainProvider.currentPage,
+            ),
             onEdittingComplete: () {
               try {
                 mainProvider.fetchListHeroes(
                   mainProvider.nameController.text,
                   "",
+                  mainProvider.currentPage,
                 );
               } catch (e) {
                 ScaffoldMessenger.of(
@@ -55,9 +59,16 @@ class FavoriteView extends StatelessWidget {
                 width: MediaQuery.sizeOf(context).width,
                 height: MediaQuery.sizeOf(context).height - 172 - 50 - 20,
                 child: Center(
-                  child: Text(
-                    "Вы пока не добавили любимых героев",
-                    style: theme.medium18,
+                  child: Column(
+                    spacing: 15,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Вы пока не добавили любимых героев",
+                        style: theme.medium18,
+                      ),
+                      Image.asset("assets/images/sad.png"),
+                    ],
                   ),
                 ),
               )
@@ -73,39 +84,53 @@ class FavoriteView extends StatelessWidget {
                         172 -
                         50 -
                         20, //172(98 appbar + 74 bottombar) - 50 fields(24+26) - 20 padding(2*10)
-                    child: ListView.separated(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      itemCount: list.length,
-                      // mainProvider.heroesFavoritos.length +
-                      // mainProvider.heroesWithFiltres.length,
-                      itemBuilder: (context, index) {
-                        if (list[index].isFavorite == true) {
-                          return FadeHeroeWidget(
-                            key: ValueKey(list[index].id),
-                            heroe: list[index],
-                            isFavorite: list[index].isFavorite ?? false,
-                            onFavoriteToggle: () {
-                              mainProvider.addOrDeleteToFavoritesFavoriteView(
-                                list[index].id,
-                              );
-                            },
-                          );
-                        } else {
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: List.generate(list.length, (index) {
                           return ItemHeroeWidget(
+                            isFavorite: mainProvider.isFavorite(list[index].id),
                             heroe: list[index],
-                            isFavorite: list[index].isFavorite ?? false,
-                            onTapStar: () {
-                              mainProvider.addOrDeleteToFavoritesFavoriteView(
-                                list[index].id,
-                              );
-                            },
+                            onTapStar: () => mainProvider
+                                .addOrDeleteToFavoritesMainView(list[index].id),
                           );
-                        }
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 10);
-                      },
+                        }),
+                      ),
                     ),
+                    // ListView.separated(
+                    //   padding: EdgeInsets.symmetric(vertical: 10),
+                    //   itemCount: list.length,
+                    //   // mainProvider.heroesFavoritos.length +
+                    //   // mainProvider.heroesWithFiltres.length,
+                    //   itemBuilder: (context, index) {
+                    //     if (list[index].isFavorite == true) {
+                    //       return FadeHeroeWidget(
+                    //         key: ValueKey(list[index].id),
+                    //         heroe: list[index],
+                    //         isFavorite: list[index].isFavorite ?? false,
+                    //         onFavoriteToggle: () {
+                    //           mainProvider.addOrDeleteToFavoritesFavoriteView(
+                    //             list[index].id,
+                    //           );
+                    //         },
+                    //       );
+                    //     } else {
+                    //       return ItemHeroe(
+                    //         heroe: list[index],
+                    //         isFavorite: list[index].isFavorite ?? false,
+                    //         onTapStar: () {
+                    //           mainProvider.addOrDeleteToFavoritesFavoriteView(
+                    //             list[index].id,
+                    //           );
+                    //         },
+                    //       );
+                    //     }
+                    //   },
+                    //   separatorBuilder: (BuildContext context, int index) {
+                    //     return const SizedBox(height: 10);
+                    //   },
+                    // ),
                   ),
                 ],
               ),

@@ -1,6 +1,9 @@
+import 'package:prueba_jun/features/main/use_cases/main_repository_impl.dart';
 import 'package:prueba_jun/library.dart';
 
 class MainProvider extends ChangeNotifier {
+  final MainRepositoryImpl mainRepository;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController statusController = TextEditingController();
 
@@ -30,33 +33,35 @@ class MainProvider extends ChangeNotifier {
   List<Heroe> heroesWithFiltres = [];
   late HeroeModel heroesModel;
 
+  MainProvider({required this.mainRepository});
+
   //fetch List Heroes
-  Future<void> fetchListHeroes(String name, String status, {int? page}) async {
+  Future<void> fetchListHeroes(String name, String status, int page) async {
     isLoading = true;
-
-    final cachedHeroes = await LocalCache.loadHeroes();
-    if (cachedHeroes.isNotEmpty) {
-      heroes = cachedHeroes;
-      isLoading = false;
-      notifyListeners();
-      // return;
-    }
-
-    heroesModel = await ApiService.fetchListHeroes(
-      name: name,
-      status: status,
-      currentPage: page ?? currentPage,
-    );
-    //если без фильтров - сохраняем в список героев и показываем на главном экране
-    if (name.isEmpty && status.isEmpty) {
-      heroes = [...heroes, ...heroesModel.results.map((e) => e)];
-      hasMore = heroesModel.info.next != null;
-      await LocalCache.saveHeroes(heroes);
-    } else {
-      // если с фильтрами - сохраняем , только исключаем показ героев, которые добавленны в избранное
-      heroesWithFiltres = heroesModel.results
-          .where((hero) => !heroesFavoritos.any((fav) => fav.id == hero.id))
-          .toList();
+    try {
+      heroesModel = await mainRepository.fetchHeroes(
+        name: name,
+        status: status,
+        page: currentPage,
+      );
+      //если без фильтров - сохраняем в список героев и показываем на главном экране
+      if (name.isEmpty && status.isEmpty) {
+        heroes = [...heroes, ...heroesModel.results.map((e) => e)];
+        hasMore = heroesModel.info.next != null;
+        await mainRepository.saveHeroesLocalCache(heroes);
+      } else {
+        // если с фильтрами - сохраняем , только исключаем показ героев, которые добавленны в избранное
+        heroesWithFiltres = heroesModel.results
+            .where((hero) => !heroesFavoritos.any((fav) => fav.id == hero.id))
+            .toList();
+      }
+    } catch (e) {
+      final cachedHeroes = await mainRepository.fetchHeroesLocalCache();
+      if (cachedHeroes.isNotEmpty) {
+        heroes = cachedHeroes;
+        isLoading = false;
+        notifyListeners();
+      }
     }
     isLoading = false;
     notifyListeners();
@@ -64,32 +69,41 @@ class MainProvider extends ChangeNotifier {
 
   addOrDeleteToFavoritesMainView(int id) async {
     isLoading = true;
+    try {
+      final heroeById = await mainRepository.fetchHeroeById(id);
 
-    final heroeById = await ApiService.fetchHeroeById(id);
-
-    if (heroesFavoritos.isEmpty) {
-      heroesFavoritos.add(heroeById);
-    } else {
-      if (heroesFavoritos.any((e) => e.id == id)) {
-        heroesFavoritos = heroesFavoritos.map((heroe) {
-          heroe.isFavorite = false;
-          return heroe;
-        }).toList();
-        heroesFavoritos.removeWhere((heroe) => heroe.id == id);
+      if (heroesFavoritos.isEmpty) {
+        heroesFavoritos.add(heroeById);
+      } else {
+        if (heroesFavoritos.any((e) => e.id == id)) {
+          heroesFavoritos = heroesFavoritos.map((heroe) {
+            heroe.isFavorite = false;
+            return heroe;
+          }).toList();
+          heroesFavoritos.removeWhere((heroe) => heroe.id == id);
+          isLoading = false;
+          notifyListeners();
+          return;
+        } else {
+          heroesFavoritos.add(heroeById);
+        }
+      }
+      heroesFavoritos = heroesFavoritos.map((heroe) {
+        heroe.isFavorite = true;
+        return heroe;
+      }).toList();
+      await mainRepository.saveHeroesFavoritesLocalCache(heroesFavoritos);
+    } catch (e) {
+      final cachedHeroesFavorites = await mainRepository
+          .fetchHeroesFavoritesLocalCache();
+      if (cachedHeroesFavorites.isNotEmpty) {
+        heroesFavoritos = cachedHeroesFavorites;
         isLoading = false;
         notifyListeners();
-        return;
-      } else {
-        heroesFavoritos.add(heroeById);
       }
+      isLoading = false;
+      notifyListeners();
     }
-    heroesFavoritos = heroesFavoritos.map((heroe) {
-      heroe.isFavorite = true;
-      return heroe;
-    }).toList();
-    await LocalCache.saveHeroesFavorites(heroesFavoritos);
-    isLoading = false;
-    notifyListeners();
   }
 
   bool isFavorite(int id) {
@@ -110,7 +124,7 @@ class MainProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       isLoading = true;
-      final heroeById = await ApiService.fetchHeroeById(idHeroe);
+      final heroeById = await mainRepository.fetchHeroeById(idHeroe);
       heroeById.isFavorite = true;
       heroesWithFiltres.removeWhere((heroe) {
         heroe.id == idHeroe;
@@ -133,7 +147,7 @@ class MainProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       isLoading = true;
-      final heroeById = await ApiService.fetchHeroeById(idHeroe);
+      final heroeById = await mainRepository.fetchHeroeById(idHeroe);
       heroeById.isFavorite = true;
       heroesWithFiltres.removeWhere((heroe) {
         heroe.id == idHeroe;

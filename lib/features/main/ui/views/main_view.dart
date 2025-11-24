@@ -12,7 +12,7 @@ class _MainViewState extends State<MainView> {
   @override
   void initState() {
     final mainProvider = context.read<MainProvider>();
-    mainProvider.fetchListHeroes("", "", page: mainProvider.currentPage);
+    mainProvider.fetchListHeroes("", "", mainProvider.currentPage);
     super.initState();
 
     _scrollController.addListener(_onScroll);
@@ -30,12 +30,7 @@ class _MainViewState extends State<MainView> {
 
   Future<void> fetchHeroes() async {
     final mainProvider = context.read<MainProvider>();
-
-    await mainProvider.fetchListHeroes(
-      "",
-      "",
-      page: mainProvider.currentPage++,
-    );
+    await mainProvider.fetchListHeroes("", "", mainProvider.currentPage++);
   }
 
   @override
@@ -67,22 +62,24 @@ class _MainViewState extends State<MainView> {
                 MediaQuery.sizeOf(context).height -
                 172, //98 appbar +74 bottombar
 
-            child: ListView.separated(
+            child: SingleChildScrollView(
               controller: _scrollController,
-              padding: EdgeInsets.symmetric(vertical: 10),
-              itemCount: mainProvider.heroes.length,
-              itemBuilder: (context, index) => ItemHeroeWidget(
-                isFavorite: mainProvider.isFavorite(
-                  mainProvider.heroes[index].id,
-                ),
-                heroe: mainProvider.heroes[index],
-                onTapStar: () => mainProvider.addOrDeleteToFavoritesMainView(
-                  mainProvider.heroes[index].id,
-                ),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: List.generate(mainProvider.heroes.length, (index) {
+                  return ItemHeroeWidget(
+                    isFavorite: mainProvider.isFavorite(
+                      mainProvider.heroes[index].id,
+                    ),
+                    heroe: mainProvider.heroes[index],
+                    onTapStar: () =>
+                        mainProvider.addOrDeleteToFavoritesMainView(
+                          mainProvider.heroes[index].id,
+                        ),
+                  );
+                }),
               ),
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 10);
-              },
             ),
           );
   }

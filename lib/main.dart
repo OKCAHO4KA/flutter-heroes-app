@@ -1,10 +1,15 @@
+import 'package:prueba_jun/features/main/use_cases/main_repository_impl.dart';
 import 'package:prueba_jun/library.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => MainProvider())],
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => MainProvider(mainRepository: MainRepositoryImpl()),
+        ),
+      ],
       child: const MyApp(),
     ),
   );
